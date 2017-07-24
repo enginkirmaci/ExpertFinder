@@ -1,0 +1,13 @@
+﻿@model ModalViewModel
+
+<div id="small-dialog" class="zoom-anim-dialog mfp-hide apply-popup">
+    <div class="small-dialog-content notification @Model.Type">
+        <h3>@Model.Message</h3>
+
+        <button id="modalOK">Tamam</button>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var returnUrl = '@Model.ReturnUrl';
+</script>

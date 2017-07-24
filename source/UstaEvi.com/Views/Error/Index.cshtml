@@ -1,0 +1,39 @@
+﻿<div class="container">
+    <div class="three columns">&nbsp;</div>
+    <div class="ten columns">
+        <div class="info-banner notification error margin-top-70 margin-bottom-70">
+            <div class="two columns">
+                <i class="fa fa-exclamation-triangle fa-5x" aria-hidden="true"></i>
+            </div>
+            <div class="six columns info-content">
+                @if (Model is BaseException)
+                {
+                    if (Model.Code == 1)
+                    {
+                        <h1></h1>
+                        <h4>Bilinmeyen bir hata oluştu. Lütfen tekrar deneyiniz.</h4>
+                    }
+                    else
+                    {
+                        <h1>@Model.Code</h1>
+                        <h4>@Model.Message</h4>
+                    }
+
+                    <p>Sürekli bu hatayı alıyorsanız <a href="mailto:destek@ExpertFinder.com">destek@ExpertFinder.com</a> adresine sorununuzu yazarak destek talebinde bulunabilirsiniz.</p>
+                    <br />
+                    <p>Anasayfaya gitmek için <a asp-route="home">tıklayınız</a>.</p>
+
+                }
+                else
+                {
+                    <h1>404</h1>
+                    <h4>Böyle bir sayfa bulunamadı.</h4>
+                    <p>Anasayfaya gitmek için <a asp-route="home">tıklayınız</a>.</p>
+                }
+            </div>
+
+            <div class="clearfix"></div>
+        </div>
+    </div>
+    <div class="three columns">&nbsp;</div>
+</div>

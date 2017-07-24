@@ -1,0 +1,76 @@
+﻿@model ExternalLoginConfirmationViewModel
+
+<div id="titlebar" class="single">
+    <div class="container">
+        <div class="sixteen columns">
+            <h2>@ViewBag.Title</h2>
+            <span>Hesabınızı @ViewData["Provider"] ile bağlayın.</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="five columns">
+        @if (ViewBag.Content != null)
+        {
+            @await Component.InvokeAsync("Content", new { content = ViewBag.Content })
+        }
+    </div>
+    <div class="six columns">
+        <form asp-route="externalloginconfirm" method="post" asp-route-returnurl="@ViewData["ReturnUrl"]" role="form">
+            <input asp-for="ReturnUrl" type="hidden" />
+            <input asp-for="Provider" type="hidden" />
+
+            <p class="form-row form-row-wide">
+                <label asp-for="FullName"></label>
+                <input asp-for="FullName" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </p>
+
+            <p class="form-row form-row-wide">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </p>
+
+            <p class="form-row form-row-wide">
+                <label asp-for="CellPhone"></label>
+                <input asp-for="CellPhone" />
+                <span asp-validation-for="CellPhone" class="text-danger"></span>
+            </p>
+
+            <p class="form-row checkboxes">
+                <input name="GiveOffer" id="GiveOffer" type="checkbox" />
+                <label for="GiveOffer">
+                    Hizmet Vermek istiyorum.
+                </label>
+            </p>
+
+            <p class="form-row form-row-wide user-categories hide">
+                <label asp-for="SelectedUserCategories"></label>
+                <select asp-for="SelectedUserCategories" asp-items="Model.UserCategories" data-placeholder="Hizmet seçiniz" class="chosen-select" multiple=""></select>
+            </p>
+
+            <p class="form-row checkboxes">
+                <input asp-for="PrivacyPolicy" />
+                <label asp-for="PrivacyPolicy" class="rememberme">
+                    <a href="kullanicisozlesmesi.aspx" class="kabul-link">Kullanıcı</a> ve
+                    <a href="gizlilikkosullari.aspx" class="kabul-link">Gizlilik</a> koşullarını okudum ve kabul ediyorum.
+                </label>
+                <span asp-validation-for="PrivacyPolicy" class="text-danger"></span>
+            </p>
+
+            <p class="form-row">
+                <button type="submit" class="button">Kayıt Ol</button>
+            </p>
+
+            <div asp-validation-summary="All" class="notification error"></div>
+        </form>
+    </div>
+    <div class="five columns">
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

@@ -1,0 +1,156 @@
+﻿@model PaymentViewModel
+
+<div id="titlebar" class="single">
+    <div class="container">
+        <div class="sixteen columns">
+            <h2>@ViewBag.Title</h2>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    @if (ViewBag.Content != null)
+    {
+        <div class="sixteen columns">
+            <div class="margin-bottom-20">
+                @await Component.InvokeAsync("Content", ViewBag.Content)
+            </div>
+        </div>
+    }
+</div>
+
+<div class="container">
+    <div class="nine columns">
+        <h2>Kullanıcı Bilgileri</h2>
+
+        <div class="submit-page manage-index">
+            <form asp-route="payment" method="post" role="form" enctype="multipart/form-data">
+                <input asp-for="CardType" type="hidden" />
+
+                <div class="form">
+                    <label asp-for="FullName"></label>
+                    <input asp-for="FullName" autocomplete="cc-full-name" autocompletetype="cc-full-name" x-autocompletetype="cc-full-name" />
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+
+                <div class="form">
+                    <label asp-for="CardNumber"></label>
+                    <div class="seven columns">
+                        <input asp-for="CardNumber" autocomplete="cc-number" autocompletetype="cc-number" x-autocompletetype="cc-number" />
+                    </div>
+                    <div class="two columns last card-image">
+                        <img class="master" src="~/images/MasterCard.png" />
+                        <img class="visa" src="~/images/Visa.png" />
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                    <span asp-validation-for="CardNumber" class="text-danger"></span>
+                </div>
+
+                <div class="clearfix"></div>
+
+                <div class="three columns">
+                    <div class="form">
+                        <label asp-for="MonthId"></label>
+                        <select asp-for="MonthId" asp-items="Model.Months" class="chosen-select" autocomplete="cc-exp-month" autocompletetype="cc-exp-month" x-autocompletetype="cc-exp-month" data-placeholder="Ay seçiniz..."></select>
+                        <span asp-validation-for="MonthId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="three columns  ">
+                    <div class="form">
+                        <label asp-for="YearId"></label>
+                        <select asp-for="YearId" asp-items="Model.Years" class="chosen-select" autocomplete="cc-exp-year" autocompletetype="cc-exp-year" x-autocompletetype="cc-exp-year" data-placeholder="Yıl seçiniz..."></select>
+                        <span asp-validation-for="YearId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="three columns last">
+                    <div class="form">
+                        <label asp-for="CVC"></label>
+                        <input asp-for="CVC" autocomplete="off" />
+                        <span asp-validation-for="CVC" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+
+                <div class="form">
+                    <label asp-for="OrderAddress"></label>
+                    <input asp-for="OrderAddress" />
+                    <span asp-validation-for="OrderAddress" class="text-danger"></span>
+                </div>
+
+                <div class="divider margin-top-0"></div>
+
+                <p class="form-row">
+                    <button name="Buy" type="submit" class="button big">Ödeme Yap <i class="fa fa-shopping-cart"></i></button>
+                </p>
+                <div asp-validation-summary="All" class="notification error"></div>
+            </form>
+        </div>
+    </div>
+
+    <div class="one column">&nbsp;</div>
+
+    <div class="six columns">
+        <h2 class="margin-bottom-10">Ödeme Bilgileri</h2>
+        <div class="widget">
+            <div class="job-overview campaign-overview">
+                <ul>
+                    <li>
+                        <i class="fa fa-ticket fa-2x"></i>
+                        <div>
+                            <h3><strong>@Model.Campaign.Title</strong></h3>
+
+                            <span>@Model.Campaign.Description</span>
+                            <span>@(string.Format("{0} Adet Jeton", Model.Campaign.TokenCount))</span>
+                            <span>@Model.Campaign.Price &#8378;</span>
+
+                            <hr />
+
+                            <strong>Ödenecek Tutar: @Model.Campaign.Price &#8378;</strong>
+                        </div>
+                    </li>
+                    <li><hr /></li>
+                    <li>
+                        <p>Ödemeniz Kuveyt Türk 3D secure ödeme sistemiyle gerçekleştirilecektir. </p>
+                        <img src="~/images/kuveyt-turk.png" />
+                        <br />
+                        <img src="~/images/secure-payment.png" />
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/payform/jquery.payform.js"></script>
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+
+    <script>
+        $('#CardNumber').payform('formatCardNumber');
+        $('#CVC').payform('formatCardCVC');
+
+        $('#CardNumber').on('input', function (e) {
+            var cardType = $.payform.parseCardType(e.target.value);
+
+            if (cardType == 'visa') {
+                $('.card-image .visa').show();
+                $('.card-image .master').hide();
+                $('#CardType').val(1);
+            } else if (cardType == 'mastercard') {
+                $('.card-image .visa').hide();
+                $('.card-image .master').show();
+                $('#CardType').val(2);
+            }
+            else {
+                $('.card-image .visa').hide();
+                $('.card-image .master').hide();
+                $('#CardType').val('');
+            }
+        });
+    </script>
+}

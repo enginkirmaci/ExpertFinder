@@ -1,0 +1,76 @@
+﻿@model LoginViewModel
+@inject SignInManager<User> SignInManager
+
+<div id="titlebar" class="single">
+    <div class="container">
+        <div class="sixteen columns">
+            <h2>@ViewBag.Title</h2>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="five columns">
+        @await Component.InvokeAsync("Content", new { content = ViewBag.Content })
+    </div>
+    <div class="six columns">
+        <form asp-route="login" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" role="form">
+            <p class="form-row form-row-wide">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </p>
+
+            <p class="form-row form-row-wide">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </p>
+
+            <p class="form-row checkboxes">
+                <input asp-for="RememberMe" />
+                <label asp-for="RememberMe" class="rememberme"></label>
+            </p>
+
+            <div class="divider margin-top-0 margin-bottom-10 padding-reset"></div>
+
+            <p class="form-row">
+                <button type="submit" class="button">Giriş</button>
+            </p>
+
+            <p class="lost_password right">
+                <a href="/kayit">Kayıt Ol</a>
+            </p>
+
+            <p class="lost_password">
+                <a href="/sifremiunuttum">Şifremi Unuttum!</a>
+            </p>
+
+            <div asp-validation-summary="All" class="notification error"></div>
+        </form>
+    </div>
+
+    <div class="five columns">
+        @{
+            var loginProviders = SignInManager.GetExternalAuthenticationSchemes().ToList();
+
+            <form asp-controller="Account" asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" role="form">
+                <div>
+                    <p>
+                        @foreach (var provider in loginProviders)
+                        {
+                            <button type="submit" class="social-button @provider.Items["class"]" name="provider" value="@provider.AuthenticationScheme" title="@provider.DisplayName ile giriş yap">
+                                <span class="icon"><i class="fa @provider.Items["icon"]"></i></span>
+                                <span class="name"> @provider.DisplayName ile giriş yap</span>
+                            </button>
+                        }
+                    </p>
+                </div>
+            </form>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

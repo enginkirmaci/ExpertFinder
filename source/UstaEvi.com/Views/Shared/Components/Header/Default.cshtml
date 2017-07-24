@@ -1,0 +1,98 @@
+﻿@using System.Security.Claims
+
+@model HeaderViewModel
+@inject IUserEngine UserEngine
+@inject UserManager<User> UserManager
+@inject SignInManager<User> SignInManager
+
+<!-- Navigation-->
+<div class="header">
+    <div class="wrapper">
+        <div class="brand">
+            <a href="/">
+                <h1 style="margin-top: 16px;">Usta Evi</h1>  @*<img src="~/images/logo.png" alt="Usta Evi" title="Usta Evi">*@
+            </a>
+        </div>
+        <nav class="navigation-items">
+            <div class="wrapper">
+                @{
+                    var signedIn = SignInManager.IsSignedIn(User);
+                    var user = await UserEngine.CurrentUser(UserManager.GetUserId(User));
+
+                    if (signedIn && user == null)
+                    {
+                <script>
+                            window.location.href = '@Url.RouteUrl("login")';
+                </script>
+                    }
+                    else if (signedIn && user != null)
+                    {
+                        var TokenCount = UserEngine.CurrentUserToken(UserManager.GetUserId(User));
+
+                <ul class="main-navigation navigation-top-header">
+                    <li><a asp-route="search" class="no-background">Aktif Hizmetler</a></li>
+                    <li><a asp-route="createItem" asp-route-categoryslug="" class="no-background">Ücretsiz Teklif Al</a></li>
+                    <li class="icon-link"><a asp-route="account" class="no-background"><i class="fa fa-bell"></i>@*(150)*@</a></li>
+                    <li class="icon-link"><a asp-route="tokens" class="no-background"><i class="fa fa-ticket"></i>(@TokenCount)</a></li>
+                    <li>
+                        <a asp-route="account">@user.FullName</a>
+                        <ul>
+                            <li>
+                                <a asp-route="account"><i class="fa fa-tachometer"></i>Hesabım</a>
+                            </li>
+
+                            <li>
+                                <a asp-route="profile" asp-route-slugUrl="@user.SlugUrl"><i class="fa fa-user"></i>Profilim</a>
+                            </li>
+
+                            <li>
+                                <a asp-route="offers"><i class="fa fa-gavel"></i>Tekliflerim</a>
+                            </li>
+
+                            <li>
+                                <a asp-route="projects"><i class="fa fa-briefcase"></i>Hizmet İsteklerim</a>
+                            </li>
+
+                            <li>
+                                <a asp-route="settings"><i class="fa fa-cog"></i>Ayarlarım</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a asp-route="logoff"><i class="fa fa-sign-out"></i>Çıkış</a></li>
+                </ul>
+                    }
+                    else
+                    {
+                <a asp-route="createItem" asp-route-categoryslug="" class="submit-item">
+                    <div class="content"><span>Ücretsiz Teklif Al</span></div>
+                    <div class="icon">
+                        <i class="fa fa-plus"></i>
+                    </div>
+                </a>
+                <ul class="user-area">
+                    <li><a asp-route="login"> Üye Girişi</a></li>
+                    <li><a asp-route="registerOverview"><strong>Kayıt</strong></a></li>
+                </ul>
+                    }
+                }
+                @*<ul class="user-area">
+                        <li><a href="sign-in.htm">Sign In</a></li>
+                        <li><a href="register.htm"><strong>Register</strong></a></li>
+                    </ul>
+                    <a href="submit.htm" class="submit-item">
+                        <div class="content"><span>Submit Your Item</span></div>
+                        <div class="icon">
+                            <i class="fa fa-plus"></i>
+                        </div>
+                    </a>
+                    <div class="toggle-navigation">
+                        <div class="icon">
+                            <div class="line"></div>
+                            <div class="line"></div>
+                            <div class="line"></div>
+                        </div>
+                    </div>*@
+            </div>
+        </nav>
+    </div>
+</div>

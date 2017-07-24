@@ -1,0 +1,68 @@
+﻿@model VerifyCodeViewModel
+
+<div id="titlebar" class="single">
+    <div class="container">
+        <div class="sixteen columns">
+            <h2>@ViewBag.Title</h2>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="five columns">
+        @await Component.InvokeAsync("Content", new { content = ViewBag.Content })
+
+        <div>Kalan Süre: <span id="remainingCounter"></span></div>
+    </div>
+    <div class="eleven columns">
+        <form asp-route="koddogrulama" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" role="form">
+            <input asp-for="ReaminingSeconds" type="hidden" class="remaining-second" />
+            <input asp-for="Type" type="hidden" />
+
+            <div id="counterVisible">
+                <p class="form-row form-row-wide">
+                    <label asp-for="Code"></label>
+                    <input asp-for="Code" />
+                    <span asp-validation-for="Code" class="text-danger"></span>
+                </p>
+
+                <p class="form-row">
+                    <button type="submit" class="btn btn-default">Onayla</button>
+                </p>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            </div>
+        </form>
+
+        <div id="counterHidden" style="display: none" class="form-row form-row-wide">
+            <div>Size verilen sürede onay kodunu giremediniz! Onay kodunu tekrar almak için aşağıdaki "Tekrar Yolla" butonuna tıklayınız.</div>
+            <button type="submit" class="btn btn-default">Tekrar Yolla</button>
+            <a asp-route="koddogrulama" class="button">Tekrar Yolla</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        var remaining = $('.remaining-second').val();
+
+        if (remaining <= 0) {
+            $('#counterVisible').hide();
+            $('#counterHidden').show();
+        }
+        else {
+            $('#counterVisible').show();
+            $('#counterHidden').hide();
+        }
+
+        var jsTimer = setInterval(counter, 1000);
+        function counter() {
+            $('#remainingCounter').html(remaining--);
+            if (remaining < 0) {
+                clearTimeout(jsTimer);
+                $('#counterVisible').hide();
+                $('#counterHidden').show();
+            }
+        };
+    </script>
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

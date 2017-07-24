@@ -1,0 +1,105 @@
+﻿@model ItemListViewModel
+
+<style>
+    .item.list .image {
+        display: table-cell;
+        width: 120px;
+        margin-right: 20px;
+    }
+
+    .item .info .type span {
+        font-size: 11px;
+    }
+
+    .item.list .wrapper {
+        display: table-cell;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    .item .price {
+        display: table;
+    }
+</style>
+
+@if (Model.Result.Count() > 0)
+{
+    <div class="container">
+        <header><h2>Son Hizmet İstekleri</h2></header>
+
+        @foreach (var item in Model.Result)
+        {
+            <div class="item list admin-view">
+                <div class="image">
+                    <a asp-route="viewItem" asp-route-category="@item.Category.SlugUrl" asp-route-slugurl="@item.SlugUrl">
+                        @if (!string.IsNullOrWhiteSpace(item.User.AvatarUrl))
+                        {
+                            <img src="~/data/profile/@item.User.AvatarUrl" alt="" />
+                        }
+                        else
+                        {
+                            <img src="~/images/avatar-placeholder.png" alt="" />
+                        }
+                    </a>
+                </div>
+                <div class="wrapper">
+                    <a asp-route="viewItem" asp-route-category="@item.Category.SlugUrl" asp-route-slugurl="@item.SlugUrl">
+                        @Utils.StripHtml(Utils.TruncateWords(Html.Raw(item.Description).ToString(), 500, null))...
+                    </a>
+
+                    @if (item.Price.HasValue)
+                    {
+                        <div class="price">
+                            @item.Price.Value &#8378;
+                        </div>
+                    }
+                    <div class="info">
+                        <div class="type">
+                            <span>@item.Category.Name</span>
+                        </div>
+                        <div class="type">
+                            <span>
+                                <i class="fa fa-map-marker"></i> @(item.District != null ? string.Format("{0},", item.District.Name) : string.Empty)  @item.Province.Name
+                            </span>
+                        </div>
+                        <div class="type">
+                            <span>@(item.AddedDate.HasValue ? Converter.TrDateTime.ToTurkishRelativeTime(item.AddedDate.Value) : string.Empty)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="description">
+                    <a href="#" class="btn btn-default"><i class="fa fa-pencil"></i> Teklif Ver</a>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <h3 class="margin-bottom-70">Sonuç bulunamadı!</h3>
+}
+
+<div class="clearfix"></div>
+@if (Model.Result.Count() > 0)
+{
+    <div class="pagination-container margin-top-50">
+        <nav class="pagination-next-prev">
+            <ul>
+                @if (Model.PageNumber != 0)
+                {
+                    <li>
+                        <button name="paging" value="@(Model.PageNumber - 1)" class="prev">Önceki</button>
+                    </li>
+                }
+                @if (Model.Result.Count() > 9)
+                {
+                    <li>
+                        <button name="paging" value="@(Model.PageNumber + 1)" class="next">Sonraki</button>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+}

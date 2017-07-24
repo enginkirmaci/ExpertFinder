@@ -1,0 +1,274 @@
+﻿@model CreateItemViewModel
+
+<div id="titlebar" class="single">
+    <div class="container">
+        <div class="sixteen columns">
+            <h2>@ViewBag.Title</h2>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="six columns">
+        @await Component.InvokeAsync("Content", ViewBag.Content)
+    </div>
+
+    <div class="ten columns">
+        <div class="submit-page manage-index">
+
+            <form id="itemForm" asp-route="CreateItemPost" method="post" role="form" enctype="multipart/form-data">
+                <input asp-for="HasCategorySelected" type="hidden" />
+                <input id="previousSelectedCategory" asp-for="SelectedCategory" type="hidden" />
+
+                <div class="form">
+                    <label asp-for="Title"></label>
+                    <input asp-for="Title" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <h4 class="itemH4"><i class="fa fa-briefcase"></i>Teklif almak istediğiniz hizmet alanı nedir?</h4>
+                <div class="form">
+                    <select asp-for="SelectedCategory" asp-items="Model.Categories" onchange="ChangeCategory(this)" class="chosen-select"></select>
+                    <span asp-validation-for="SelectedCategory" class="text-danger"></span>
+                </div>
+
+                @if (Model.Questions != null)
+                {
+                    <h4 class="itemH4"><i class="fa fa-comments-o"></i>Ne yapılmasını istiyorsun?</h4>
+
+                    foreach (var question in Model.Questions)
+                    {
+                        var controlId = Converter.String.ToValidControlId(question.Label);
+
+                        @switch (question.CategoryQuestionTypeId)
+                        {
+                            case 1: //Textbox
+                                <div class="form">
+                                    <label for="@controlId">@question.Label</label>
+                                    <input name="@controlId" type="text" value="@question.Value" />
+                                </div>
+                                break;
+
+                            case 2:
+                                <div class="form">
+                                    <label for="@controlId">@question.Label</label>
+                                    <select name="@controlId" class="chosen-select" data-placeholder="Seçim yapınız">
+                                        <option value=""></option>
+                                        @foreach (var option in question.ListValues.Split('|'))
+                                        {
+                                            if (!string.IsNullOrWhiteSpace(question.Value) && question.Value == option)
+                                            {
+                                                <option value="@option" selected="selected">@option</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@option">@option</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                break;
+
+                            case 3:
+                                var values = question.Value != null ? question.Value.Split('|') : null;
+                                <label>@question.Label</label>
+                                <div class="form checkboxes">
+                                    @foreach (var option in question.ListValues.Split('|'))
+                                    {
+                                        var optionId = Converter.String.ToValidControlId(option);
+
+                                        if (values != null && values.Any(i => i == option))
+                                        {
+                                            <input type="checkbox" id="@optionId" name="@controlId" value="@option" checked="checked">
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" id="@optionId" name="@controlId" value="@option">
+                                        }
+
+                                        <label for="@optionId" class="rememberme">@option</label>
+                                        <br />
+                                    }
+                                </div>
+                                break;
+                        }
+                    }
+                    <div class="form">
+                        <label asp-for="Description"></label>
+                        <textarea asp-for="Description" class="WYSIWYG" cols="40" rows="3" spellcheck="true"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <h4 class="itemH4"><i class="fa fa-picture-o"></i>Galeri</h4>
+                    <div class="gallery-edit">
+                        @*@foreach (var item in UserEngine.GetGallery(user.Id))
+                            {
+                                <div class="gallery-item">
+                                    <input type="hidden" value="@item.Id" />
+                                    <a class="button delete-button">SİL</a>
+                                    <a class="img-container img-span" href="~/data/profilegallery/@item.Url">
+                                        <img src="~/data/profilegallery/@item.Url" />
+                                    </a>
+                                </div>
+                            }*@
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                    <h4 class="itemH4"><i class="fa fa-map-marker"></i>Hizmet nerede verilecek</h4>
+                    <div class="five columns">
+                        <div class="form">
+                            <label asp-for="ProvinceId"></label>
+                            <select asp-for="ProvinceId" asp-items="Model.Provinces" onchange="FillDistrict(this)" class="chosen-select"></select>
+                            <span asp-validation-for="ProvinceId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="five columns last">
+                        <div class="form">
+                            <label asp-for="DistrictId"></label>
+                            <select id="districtSelect" asp-for="DistrictId" asp-items="Model.Districts" class="chosen-select"></select>
+                            <span asp-validation-for="DistrictId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <h4 class="itemH4"><i class="fa fa-calendar"></i>Hizmeti ne zaman almak istiyorsun?</h4>
+                    <div class="form">
+                        <select asp-for="WhenTypeId" asp-items="Model.WhenTypes" onchange="ChangeWhenType(this)" class="chosen-select"></select>
+                        <span asp-validation-for="WhenTypeId" class="text-danger"></span>
+                    </div>
+
+                    <div class="five columns dates">
+                        <div class="form">
+                            <select asp-for="WhenDateId" asp-items="Model.WhenDates" class="chosen-select"></select>
+                        </div>
+                    </div>
+
+                    <div class="five columns dates last">
+                        <div class="form">
+                            <select asp-for="WhenTimeId" asp-items="Model.WhenTimes" class="chosen-select"></select>
+                        </div>
+                    </div>
+
+                    <div class="clearfix"></div>
+                    <h4 class="itemH4"><i class="fa fa-money"></i>Ne kadar bütçe ayırıyorsun?</h4>
+                    <div class="form margin-bottom-0 j-price">
+                        <input asp-for="Price" />
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+                    <div class="form checkboxes margin-top-0">
+                        <input asp-for="UnknownPrice" />
+                        <label asp-for="UnknownPrice" class="rememberme"></label>
+                    </div>
+
+                    <div class="clearfix"></div>
+                }
+
+                <div class="divider margin-top-0"></div>
+
+                <p class="form-row">
+                    <button type="submit" class="button big">Kaydet <i class="fa fa-arrow-circle-right"></i></button>
+                </p>
+                <div asp-validation-summary="All" class="notification error"></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/scripts/jquery.sceditor.xhtml.min.js"></script>
+    <script src="~/scripts/jquery.sceditor.tr.js"></script>
+    <script src="~/scripts/jquery.sceditor.js"></script>
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script>
+        function ChangeCategory(input) {
+            if ($("#previousSelectedCategory").val())
+                window.location.href = window.location.href.replace($("#previousSelectedCategory").val(), $(input).val());
+            else
+                window.location.href = window.location.href + $(input).val();
+        }
+
+        $(".dates").hide();
+        function ChangeWhenType(input) {
+            if ($(input).val() == 1) {
+                $(".dates").show();
+            }
+            else {
+                $(".dates").hide();
+            }
+        }
+
+        var uploadIndex = 0;
+
+        $(document).ready(function () {
+            addGalleryButton(uploadIndex++);
+        });
+
+        $(document).on('change', '.imageupload', function (e) {
+            var template = '<div class="gallery-item item-{index}"><a class="button delete-button" data-button="button-{pos}">SİL</a><span class="img-span"><img src="" /></span></div>';
+            template = template.replace('{pos}', uploadIndex - 1);
+            template = template.replace(/{index}/g, uploadIndex - 1);
+
+            $('.gallery-edit').append(template);
+
+            readURL(this, '.item-' + (uploadIndex - 1));
+
+            addGalleryButton(uploadIndex++);
+        });
+
+        function addGalleryButton(index) {
+            $('.add-button').parent().hide();
+
+            if ($('.gallery-item').not('.btn').length < 5) {
+                var buttonTemplate = '<div class="gallery-item btn button-{index}"><label class="add-button"><input name="galleryImage" class="imageupload" type="file"><span>+</span></label></div>';
+                buttonTemplate = buttonTemplate.replace('{index}', index);
+
+                $('.gallery-edit').append(buttonTemplate);
+            }
+        }
+
+        $(document).on('click', '.delete-button', function (e) {
+            e.preventDefault();
+
+            var element = $(this).parent();
+
+            if ($(this).parent().find('input[type=hidden]').length > 0) {
+                var id = $(this).parent().find('input[type=hidden]').val();
+
+                $.ajax({
+                    url: '/api/JSON/RemoveGallery/' + id,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (result) {
+                        if (result.Type == 1)
+                            element.remove();
+                    }
+                });
+            }
+            else {
+                var button = $(this).data('button');
+                $('.gallery-item.' + button).remove();
+                element.remove();
+            }
+
+            if ($('.gallery-item').not('.btn').length < 5)
+                addGalleryButton(uploadIndex++);
+        });
+
+        function readURL(input, delegate) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    if (delegate == null)
+                        $(input).parent().parent().find('.image').attr('src', e.target.result);
+                    else
+                        $(delegate).find('img').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}

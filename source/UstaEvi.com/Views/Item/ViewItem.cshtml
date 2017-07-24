@@ -1,0 +1,424 @@
+﻿@using System.Security.Claims
+
+@inject UserManager<User> UserManager
+@inject IProjectEngine ProjectEngine
+@inject IUserEngine UserEngine
+
+@model ViewItemViewModel
+
+@{
+    var logins = await UserManager.GetLoginsAsync(Model.ItemUser);
+}
+
+<div id="titlebar" class="single">
+    <div class="container">
+        <div class="sixteen columns">
+            <span>@(Model.Item.Category.Parent != null ? string.Format("{0} \\ {1}", Model.Item.Category.Parent.Name, Model.Item.Category.Name) : Model.Item.Category.Name)</span>
+            <h2>@ViewBag.Title</h2>
+        </div>
+    </div>
+</div>
+
+<div class="container item-view">
+    <div class="eleven columns">
+        <div class="padding-right">
+            <div class="company-info">
+                <div class="seven columns">
+                    <a asp-route="profile" asp-route-slugUrl="@Model.ItemUser.SlugUrl">
+                        @if (!string.IsNullOrWhiteSpace(Model.ItemUser.AvatarUrl))
+                        {
+                            <img src="~/data/profile/@Model.ItemUser.AvatarUrl" />
+                        }
+                        else
+                        {
+                            <img src="~/images/avatar-placeholder.png" />
+                        }
+                    </a>
+                    <div class="content">
+                        <h4><a asp-route="profile" asp-route-slugUrl="@Model.ItemUser.SlugUrl">@Model.ItemUser.FullName</a></h4>
+                        <h5>@Model.ItemUser.Title</h5>
+                        @if (Model.ItemUser.Province != null)
+                        {
+                            <span class="icons">
+                                <i class="fa fa-map-marker"></i>
+                                @(Model.ItemUser.District != null ? string.Format("{0},", Model.ItemUser.District.Name) : string.Empty)  @Model.ItemUser.Province.Name
+                            </span>
+                        }
+
+                        @if (Model.hasWinner)
+                        {
+                            <div class="resumes-list-content">
+                                <span class="icons"><a href="tel:@Model.ItemUser.PhoneNumber" target="_blank"><i class="fa fa-mobile-phone"></i> @Model.ItemUser.PhoneNumber</a></span>
+                                <br />
+                                @if (!string.IsNullOrWhiteSpace(Model.ItemUser.PhoneNumber2))
+                                {
+                                    <span class="icons"><a href="tel:@Model.ItemUser.PhoneNumber2" target="_blank"><i class="fa fa-phone"></i> @Model.ItemUser.PhoneNumber2</a></span>
+                                    <br />
+                                }
+                                @if (!string.IsNullOrWhiteSpace(Model.ItemUser.Website))
+                                {
+                                    <span class="icons"><a href="http://@Model.ItemUser.Website" target="_blank"><i class="fa fa-link"></i> @Model.ItemUser.Website</a></span>
+                                    <br />
+                                }
+                                <span class="icons"><a href="mailto:@Model.ItemUser.Email"><i class="fa fa-envelope"></i> @Model.ItemUser.Email</a></span>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="three columns">
+
+                    @if (Model.ItemUser.Rating.HasValue)
+                    {
+                        <span class="rate-number">@Model.ItemUser.Rating</span>
+                    }
+                    else
+                    {
+                        <span class="rate-number">0.0</span>
+                    }
+                    <div class="rating @ExpertFinder.Common.Converters.Rating.ToString(Model.ItemUser.Rating)-stars">
+                        <div class="star-rating"></div>
+                        <div class="star-bg"></div>
+                    </div>
+                    <div class="verified-providers">
+                        @if (Model.ItemUser.EmailConfirmed)
+                        {
+                            <span><i class="fa fa-envelope"></i></span>
+                        }
+                        @if (Model.ItemUser.PhoneNumberConfirmed)
+                        {
+                            <span><i class="fa fa-mobile-phone"></i></span>
+                        }
+                        @foreach (var login in logins)
+                        {
+                            <span><i class="fa fa-@login.LoginProvider.ToLower()"></i></span>
+                        }
+                        @if (Model.ItemUser.IsBoughtAnyToken.HasValue && Model.ItemUser.IsBoughtAnyToken.Value)
+                        {
+                            <span><i class="fa fa-ticket"></i></span>
+                        }
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+            </div>
+            @Html.Raw(Model.Item.Description)
+
+            @if (Model.Images.Count() > 0)
+            {
+                <div class="margin-bottom-45 margin-top-20">
+                    <h4><i class="fa fa-picture-o"></i> Galeri</h4>
+                    <div class="gallery">
+                        @foreach (var item in Model.Images)
+                        {
+
+                            <a class="img-container img-a" href="~/data/itemgallery/@item">
+                                <img class="item" src="~/data/itemgallery/@item" />
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="five columns">
+        <div class="widget">
+            <div class="job-overview">
+
+                <ul>
+                    <li>
+                        <i class="fa fa-briefcase"></i>
+                        <div>
+                            <strong>Teklif istenilen hizmet alanı</strong>
+                            <span>@Model.Item.Category.Name</span>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fa fa-comments-o"></i>
+                        <div>
+                            <strong>İhtiyacın detayları</strong>
+
+                            @foreach (var question in Model.Questions)
+                            {
+                                @switch (question.CategoryQuestionTypeId)
+                                {
+                                    case 3:
+                                        <span>@question.Label</span>
+                                        foreach (var answer in question.Value.Split('|'))
+                                        {
+                                            <span class="answer margin-bottom-0">- @answer</span>
+                                        }
+                                        break;
+
+                                    default:
+                                        <span>@question.Label</span>
+                                        <span class="answer">- @question.Value</span>
+                                        break;
+                                }
+                            }
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fa fa-map-marker"></i>
+                        <div>
+                            <strong>Hizmet nerede isteniyor</strong>
+                            <span>@(Model.Item.District != null ? string.Format("{0},", Model.Item.District.Name) : string.Empty) @Model.Item.Province.Name</span>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fa fa-calendar"></i>
+                        <div>
+                            <strong>Hizmet ne zaman isteniyor</strong>
+
+                            @switch (Model.Item.WhenType)
+                            {
+                                case (int)ExpertFinder.Common.Enums.WhenType.SpecificDate:
+                                    <span>@Model.Item.WhenDate.ToShortTrDate()</span>
+                                    break;
+                                case (int)ExpertFinder.Common.Enums.WhenType.OneMonth:
+                                    <span>Bir ay içinde</span>
+                                    break;
+                                case (int)ExpertFinder.Common.Enums.WhenType.ThreeMonth:
+                                    <span>Üç ay içinde</span>
+                                    break;
+                                case (int)ExpertFinder.Common.Enums.WhenType.SixMonth:
+                                    <span>Altı ay içinde</span>
+                                    break;
+                            }
+                        </div>
+                    </li>
+
+                    <li>
+                        <i class="fa fa-money"></i>
+                        <div>
+                            <strong>Ayrılan bütçe</strong>
+                            @if (Model.Item.Price.HasValue)
+                            {
+                                <span>@Model.Item.Price.Value &#8378;</span>
+                            }
+                            else
+                            {
+                                <span>Bütçe konusunda bir fikrim yok.</span>
+                            }
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    @if (UserManager.GetUserId(User) != null)
+    {
+        @if (Model.ItemUser.Id != UserManager.GetUserId(User))
+        {
+            <div class="eleven columns margin-bottom-45">
+                <hr />
+                <h4><i class="fa fa-gavel"></i> Teklifiniz</h4>
+
+                @if (Model.Offers.Count() > 0)
+                {
+                    var offer = Model.Offers.FirstOrDefault();
+
+                    <div class="application">
+                        <div class="app-content">
+
+                            @if (Model.hasWinner)
+                        {
+                                <div class="notification success">
+                                    Tebrikler, teklifiniz kabul edildi.
+                                </div>
+                            }
+
+                            <div class="info">
+                                <a asp-route="profile" asp-route-slugUrl="@offer.User.SlugUrl">
+                                    @if (!string.IsNullOrWhiteSpace(offer.User.AvatarUrl))
+                                    {
+                                        <img src="~/data/profile/@offer.User.AvatarUrl" />
+                                    }
+                                    else
+                                    {
+                                        <img src="~/images/avatar-placeholder.png" />
+                                    }
+                                </a>
+                                <span><a asp-route="profile" asp-route-slugUrl="@offer.User.SlugUrl">@offer.User.FullName</a></span>
+                                <h5>@offer.User.Title</h5>
+                            </div>
+
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="app-tabs">
+                            <div class="app-tab-content">
+                                <i>Mesaj:</i>
+                                <span>@offer.Comment</span>
+                                <i>Fiyat:</i>
+                                <span>@offer.OfferPrice &#8378;</span>
+                            </div>
+                        </div>
+
+                        <div class="app-footer">
+                            <div class="margin-top-0 rating @ExpertFinder.Common.Converters.Rating.ToString(offer.User.Rating)-stars">
+                                <div class="star-rating"></div>
+                                <div class="star-bg"></div>
+                            </div>
+                            <ul>
+                                <li><i class="fa fa-calendar"></i> @Converter.TrDateTime.ToTurkishRelativeTime(offer.OfferDate)</li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    var TokenCount = UserEngine.CurrentUserToken(UserManager.GetUserId(User));
+                    var hasEnoughToken = TokenCount > 0;
+
+                    <form asp-route="createOffer" method="post" role="form" enctype="multipart/form-data">
+                        <input asp-for="Item.Id" type="hidden" />
+                        <div class="form">
+                            <label asp-for="Comment"></label>
+                            <textarea asp-for="Comment" cols="40" rows="3"></textarea>
+                            <span asp-validation-for="Comment" class="text-danger"></span>
+                        </div>
+
+                        <div class="form">
+                            <label asp-for="OfferPrice"></label>
+                            <input asp-for="OfferPrice" />
+                            <span asp-validation-for="OfferPrice" class="text-danger"></span>
+                        </div>
+
+                        <div class="divider margin-top-0"></div>
+
+                        <p class="form-row">
+                            <button type="submit" class="button big" @(!hasEnoughToken ? "disabled" : string.Empty)>Teklif Gönder <i class="fa fa-arrow-circle-right"></i></button>
+                        </p>
+
+                        @if (!hasEnoughToken)
+                        {
+                            <div class="notification error">
+                                Yeterli jetonunuz bulunmamaktadır. Teklif verebilmek için jeton almanız gerekmektedir. Kampanyalar sayfasına gitmek için <a asp-route="campaign" data-page="4">tıklayınız</a>.
+                            </div>
+                        }
+
+                        <div asp-validation-summary="All" class="notification error"></div>
+                    </form>
+                }
+            </div>
+        }
+        else
+        {
+            <div id="teklif" class="eleven columns margin-bottom-45">
+                <hr />
+
+                @if (Model.hasWinner)
+                {
+                    <h4 class="margin-bottom-15"><i class="fa fa-gavel"></i> Kazanan Teklif</h4>
+                }
+                else
+                {
+                    <h4 class="margin-bottom-15"><i class="fa fa-gavel"></i> Teklifler @(Model.Offers.Count() != 0 ? string.Format(" ({0})", Model.Offers.Count()) : string.Empty)</h4>
+                }
+
+                @if (Model.Offers.Count() == 0)
+                {
+                    <span>Henüz hizmet isteğinize bir teklif almadınız.</span>
+                }
+
+                <form asp-route="acceptoffer" method="post" role="form">
+                    @foreach (var offer in Model.Offers)
+                    {
+                        <div class="application">
+                            <div class="app-content">
+
+                                <div class="info">
+                                    <a asp-route="profile" asp-route-slugUrl="@offer.User.SlugUrl">
+                                        @if (!string.IsNullOrWhiteSpace(offer.User.AvatarUrl))
+                                        {
+                                            <img src="~/data/profile/@offer.User.AvatarUrl" />
+                                        }
+                                        else
+                                        {
+                                            <img src="~/images/avatar-placeholder.png" />
+                                        }
+                                    </a>
+                                    <span><a asp-route="profile" asp-route-slugUrl="@offer.User.SlugUrl">@offer.User.FullName</a></span>
+                                    <h5>@offer.User.Title</h5>
+
+                                    @if (Model.hasWinner)
+                                    {
+                                        <ul>
+                                            @if (!string.IsNullOrWhiteSpace(offer.User.Email))
+                                            {
+                                                <li><a href="mailto:@offer.User.Email"><i class="fa fa-envelope"></i> @offer.User.Email</a></li>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(offer.User.PhoneNumber))
+                                            {
+                                                <li><a href="tel:@offer.User.PhoneNumber" target="_blank"><i class="fa fa-mobile-phone"></i> @offer.User.PhoneNumber</a></li>
+                                            }
+                                        </ul>
+                                    }
+                                </div>
+
+                                @if (!Model.hasWinner)
+                                {
+                                    <div class="buttons">
+                                        <button name="acceptButton" type="submit" value="@offer.Id" class="button gray app-link">Kabul Et <i class="fa fa-check"></i></button>
+                                    </div>
+                                }
+
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="app-tabs">
+                                <div class="app-tab-content">
+                                    <i>Mesaj:</i>
+                                    <span>@offer.Comment</span>
+                                    <i>Fiyat:</i>
+                                    <span>@offer.OfferPrice &#8378;</span>
+                                </div>
+                            </div>
+
+                            @if (offer.IsRated == false && offer.IsWinner == true)
+                            {
+                                <div class="app-tabs">
+                                    <div class="app-tab-content">
+                                        <h4>Teklifi yorumlayın</h4>
+                                        <div class="select-grid">
+                                            <input name="rateValue" class="js-rate-value" type="hidden">
+                                        </div>
+                                        <i style="display:inline-block">Puanınız:</i>
+                                        <div class="starrr">
+                                        </div>
+
+                                        <i class="margin-top-10">Yorumunuz:</i>
+                                        <textarea name="rateComment" placeholder="Yorumunuzu giriniz"></textarea>
+                                        <div class="buttons">
+                                            <button name="rateButton" type="submit" value="@offer.Id" class="button margin-top-15">Gönder</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (offer.IsRated)
+                            {
+                                <p class="notification success">Teklif veren yorumlandı.</p>
+                            }
+
+                            <div class="app-footer">
+                                <div class="margin-top-0 rating @Rating.ToString(offer.User.Rating)-stars">
+                                    <div class="star-rating"></div>
+                                    <div class="star-bg"></div>
+                                </div>
+                                <ul>
+                                    <li><i class="fa fa-calendar"></i> @Converter.TrDateTime.ToTurkishRelativeTime(offer.OfferDate)</li>
+                                </ul>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    }
+                    <div asp-validation-summary="All" class="notification error"></div>
+                </form>
+            </div>
+        }
+    }
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

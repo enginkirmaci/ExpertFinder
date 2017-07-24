@@ -1,0 +1,109 @@
+﻿@using System.Security.Claims
+
+@inject IUserEngine UserEngine
+@inject UserManager<User> UserManager
+@model ManageIndexViewModel
+
+@{
+    var user = await UserEngine.CurrentUser(UserManager.GetUserId(User));
+
+    ViewBag.Title = "Hesabım";
+}
+
+<div class="container manage-index">
+    @await Component.InvokeAsync("ManageNav")
+
+    <div class="eleven columns">
+        <div id="titlebar">
+            <h4>Kolay menü</h4>
+        </div>
+
+        <div class="quick-actions">
+            <a asp-route="search" class="button"><i class="fa fa-gavel"></i> Teklif Ver</a>
+            <a asp-route="createItem" class="button"><i class="fa fa-briefcase"></i> Teklif Al</a>
+            <a asp-route="campaign" class="button"><i class="fa fa-ticket"></i> Jeton Satın Al</a>
+            <a asp-route="offers" class="button"><i class="fa fa-gavel"></i>Tekliflerim</a>
+        </div>
+
+        @if (Model.UserCategories != null && Model.UserCategories.Count() > 0)
+        {
+            <div id="titlebar">
+                <h4>Hizmet Ver</h4>
+            </div>
+
+            <div class="quick-actions">
+                @foreach (var item in Model.UserCategories)
+                {
+                    <a asp-route="search" asp-route-categoryId="@item.CategoryId" asp-route-provinceId="@user.ProvinceId" asp-route-districtId="@user.DistrictId" class="button">@item.Category.Name</a>
+                }
+            </div>
+        }
+
+        <div id="titlebar">
+            <h4>Aktivite</h4>
+        </div>
+
+        <table class="manage-table activity">
+            @if (Model.Notifications.Count() > 0)
+            {
+                foreach (var item in Model.Notifications)
+                {
+                    switch (item.NotificationTypeId)
+                    {
+                        case (int)NotificationTypes.CreateOffer:
+                        case (int)NotificationTypes.ReceivedOffer:
+                        case (int)NotificationTypes.AcceptOffer:
+                        case (int)NotificationTypes.ReceivedAcceptOffer:
+                        case (int)NotificationTypes.CreateItem:
+                        case (int)NotificationTypes.EditItem:
+                            <tr>
+                                <td class="title">
+                                    <a asp-route="redirectNotification" asp-route-id="@item.Id">@item.Description</a>
+                                </td>
+                                <td>@Converter.TrDateTime.ToTurkishRelativeTime(item.AddedDate)</td>
+                            </tr>
+                            break;
+                        case (int)NotificationTypes.ProfileSaved:
+                            <tr>
+                                <td class="title">
+                                    <a asp-route="profile" asp-route-slugUrl="@user.SlugUrl">@item.Description</a>
+                                </td>
+                                <td>@Converter.TrDateTime.ToTurkishRelativeTime(item.AddedDate)</td>
+                            </tr>
+                            break;
+                        case (int)NotificationTypes.PaymentComplete:
+                        case (int)NotificationTypes.AdminToken:
+                            <tr>
+                                <td class="title">
+                                    <a asp-route="tokens">@item.Description</a>
+                                </td>
+                                <td>@Converter.TrDateTime.ToTurkishRelativeTime(item.AddedDate)</td>
+                            </tr>
+                            break;
+                        case (int)NotificationTypes.CellPhoneVerified:
+                        case (int)NotificationTypes.RegistrationExternalProvider:
+                        case (int)NotificationTypes.LinkExternalProvider:
+                        case (int)NotificationTypes.UnLinkExternalProvider:
+                        case (int)NotificationTypes.ChangedPassword:
+                        case (int)NotificationTypes.SetPassword:
+                        case (int)NotificationTypes.EmailVerified:
+                        case (int)NotificationTypes.SendMailVerify:
+                            <tr>
+                                <td class="title">
+                                    <a asp-route="settings">@item.Description</a>
+                                </td>
+                                <td>@Converter.TrDateTime.ToTurkishRelativeTime(item.AddedDate)</td>
+                            </tr>
+                            break;
+                        default:
+                            <tr>
+                                <td class="title">@item.Description</td>
+                                <td>@Converter.TrDateTime.ToTurkishRelativeTime(item.AddedDate)</td>
+                            </tr>
+                            break;
+                    }
+                }
+            }
+        </table>
+    </div>
+</div>

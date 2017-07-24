@@ -1,0 +1,13 @@
+﻿@model ContentViewModel
+
+@if (Model != null)
+{
+    <div class="container">
+        @if (!Model.SetPageTitle && !string.IsNullOrWhiteSpace(Model.Title))
+        {
+            <h4>@Model.Title</h4>
+        }
+
+        @Html.Raw(Model.Content)
+    </div>
+}

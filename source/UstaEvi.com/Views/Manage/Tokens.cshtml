@@ -1,0 +1,53 @@
+﻿@model TokensViewModel
+
+<div class="container manage-index">
+    @await Component.InvokeAsync("ManageNav")
+
+    <div class="eleven columns">
+        <h2 class="pull-left">@ViewBag.Title</h2>
+
+        @*<div class="filters pull-right">
+                <form method="post" role="form" enctype="multipart/form-data">
+                    <select asp-for="FilterTypeId" asp-items="Model.FilterTypes" class="chosen-select js-submit"></select>
+                </form>
+            </div>*@
+
+        <div class="clearfix"></div>
+
+        <div class="margin-top-10"></div>
+        @await Component.InvokeAsync("Content", ViewBag.Content)
+        <div class="margin-bottom-10"></div>
+
+        <a asp-route="campaign" class="button"><i class="fa fa-ticket"></i> Jeton Satın Al</a>
+
+        <hr />
+        @if (Model.Items.Count() > 0)
+        {
+            <table class="manage-table activity">
+                @if (Model.Items.Count() > 0)
+                {
+                    foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td class="title">@item.Title</td>
+                            <td class="title">@item.Count</td>
+                            <td>@Converter.TrDateTime.ToTurkishRelativeTime(item.Date)</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td class="title"><h5>Toplam: </h5></td>
+                        <td class="title"><h5>@Model.TokenCount</h5></td>
+                        <td></td>
+                    </tr>
+                }
+            </table>
+        }
+        else
+        {
+            <div class="notification warning closeable">
+                <p>Henüz hiçbir jeton satın alıp, kullanmadınız!  </p>
+                <div class="clearfix"></div>
+            </div>
+        }
+    </div>
+</div>

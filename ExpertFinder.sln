@@ -1,0 +1,110 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Entities", "..\Common\src\Common.Entities\Common.Entities.csproj", "{4EA8E4E7-B097-4CF3-A85C-11C16504397A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Database", "..\Common\src\Common.Database\Common.Database.csproj", "{B3D4A07F-5991-44F4-A0D1-E09592D79739}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Web", "..\Common\src\Common.Web\Common.Web.csproj", "{56E95D91-AC7A-486E-AAA3-F391A4FE9AB6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Utilities", "..\Common\src\Common.Utilities\Common.Utilities.csproj", "{BD5C0DBE-8FD8-44BD-BB1E-A2DB461F0A70}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{E3990EDE-FF2A-4E36-9F5E-634DFEA589E0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UstaEvi.com", "source\UstaEvi.com\UstaEvi.com.csproj", "{8034303B-92BA-4F33-8E19-860D8554CA6A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpertFinder.Models", "source\ExpertFinder.Models\ExpertFinder.Models.csproj", "{FDAB6C07-DF59-4D9A-87D2-BA473DF36613}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpertFinder.Common", "source\ExpertFinder.Common\ExpertFinder.Common.csproj", "{2ABD764E-F942-43B7-AA81-B2740835B658}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpertFinder.Application", "source\ExpertFinder.Application\ExpertFinder.Application.csproj", "{90AAC57E-43DA-4F4B-B8F1-48CEAD2BED6B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4EA8E4E7-B097-4CF3-A85C-11C16504397A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EA8E4E7-B097-4CF3-A85C-11C16504397A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EA8E4E7-B097-4CF3-A85C-11C16504397A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EA8E4E7-B097-4CF3-A85C-11C16504397A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3D4A07F-5991-44F4-A0D1-E09592D79739}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3D4A07F-5991-44F4-A0D1-E09592D79739}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3D4A07F-5991-44F4-A0D1-E09592D79739}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3D4A07F-5991-44F4-A0D1-E09592D79739}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56E95D91-AC7A-486E-AAA3-F391A4FE9AB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56E95D91-AC7A-486E-AAA3-F391A4FE9AB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56E95D91-AC7A-486E-AAA3-F391A4FE9AB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56E95D91-AC7A-486E-AAA3-F391A4FE9AB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD5C0DBE-8FD8-44BD-BB1E-A2DB461F0A70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD5C0DBE-8FD8-44BD-BB1E-A2DB461F0A70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD5C0DBE-8FD8-44BD-BB1E-A2DB461F0A70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD5C0DBE-8FD8-44BD-BB1E-A2DB461F0A70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8034303B-92BA-4F33-8E19-860D8554CA6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8034303B-92BA-4F33-8E19-860D8554CA6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8034303B-92BA-4F33-8E19-860D8554CA6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8034303B-92BA-4F33-8E19-860D8554CA6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDAB6C07-DF59-4D9A-87D2-BA473DF36613}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDAB6C07-DF59-4D9A-87D2-BA473DF36613}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDAB6C07-DF59-4D9A-87D2-BA473DF36613}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDAB6C07-DF59-4D9A-87D2-BA473DF36613}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2ABD764E-F942-43B7-AA81-B2740835B658}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ABD764E-F942-43B7-AA81-B2740835B658}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ABD764E-F942-43B7-AA81-B2740835B658}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2ABD764E-F942-43B7-AA81-B2740835B658}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90AAC57E-43DA-4F4B-B8F1-48CEAD2BED6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90AAC57E-43DA-4F4B-B8F1-48CEAD2BED6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90AAC57E-43DA-4F4B-B8F1-48CEAD2BED6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90AAC57E-43DA-4F4B-B8F1-48CEAD2BED6B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4EA8E4E7-B097-4CF3-A85C-11C16504397A} = {E3990EDE-FF2A-4E36-9F5E-634DFEA589E0}
+		{B3D4A07F-5991-44F4-A0D1-E09592D79739} = {E3990EDE-FF2A-4E36-9F5E-634DFEA589E0}
+		{56E95D91-AC7A-486E-AAA3-F391A4FE9AB6} = {E3990EDE-FF2A-4E36-9F5E-634DFEA589E0}
+		{BD5C0DBE-8FD8-44BD-BB1E-A2DB461F0A70} = {E3990EDE-FF2A-4E36-9F5E-634DFEA589E0}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 5
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://enginkirmaci.visualstudio.com/
+		SccProjectUniqueName0 = ..\\Common\\src\\Common.Database\\Common.Database.csproj
+		SccProjectTopLevelParentUniqueName0 = ExpertFinder.sln
+		SccProjectName0 = ../Common
+		SccAuxPath0 = https://enginkirmaci.visualstudio.com
+		SccLocalPath0 = ..\\Common
+		SccProvider0 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectFilePathRelativizedFromConnection0 = src\\Common.Database\\
+		SccProjectUniqueName1 = ..\\Common\\src\\Common.Entities\\Common.Entities.csproj
+		SccProjectTopLevelParentUniqueName1 = ExpertFinder.sln
+		SccProjectName1 = ../Common
+		SccAuxPath1 = https://enginkirmaci.visualstudio.com
+		SccLocalPath1 = ..\\Common
+		SccProvider1 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectFilePathRelativizedFromConnection1 = src\\Common.Entities\\
+		SccProjectUniqueName2 = ..\\Common\\src\\Common.Utilities\\Common.Utilities.csproj
+		SccProjectTopLevelParentUniqueName2 = ExpertFinder.sln
+		SccProjectName2 = ../Common
+		SccAuxPath2 = https://enginkirmaci.visualstudio.com
+		SccLocalPath2 = ..\\Common
+		SccProvider2 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectFilePathRelativizedFromConnection2 = src\\Common.Utilities\\
+		SccProjectUniqueName3 = ..\\Common\\src\\Common.Web\\Common.Web.csproj
+		SccProjectTopLevelParentUniqueName3 = ExpertFinder.sln
+		SccProjectName3 = ../Common
+		SccAuxPath3 = https://enginkirmaci.visualstudio.com
+		SccLocalPath3 = ..\\Common
+		SccProvider3 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccProjectFilePathRelativizedFromConnection3 = src\\Common.Web\\
+		SccProjectUniqueName4 = source\\UstaEvi.com\\UstaEvi.com.csproj
+		SccProjectName4 = source/UstaEvi.com
+		SccAuxPath4 = https://enginkirmaci.visualstudio.com
+		SccLocalPath4 = source\\UstaEvi.com
+		SccProvider4 = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,54 @@
+﻿@model SearchViewModel
+
+<div id="titlebar" class="single">
+    <div class="container">
+        <div class="sixteen columns">
+            <h2>@ViewBag.Title</h2>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <form asp-route="search" method="post" role="form" enctype="multipart/form-data">
+        <input asp-for="PageNumber" type="hidden" />
+        <div class="eleven columns">
+            <div class="padding-right">
+
+                <div class="margin-bottom-20">
+                    @await Component.InvokeAsync("Content", new { content = ViewBag.Content })
+                </div>
+
+                <div class="list-search">
+                    <button><i class="fa fa-search"></i></button>
+                    <input asp-for="Keyword" placeholder="başlık, anahtar kelime yada isim" />
+                    <div class="clearfix"></div>
+                </div>
+
+                @await Component.InvokeAsync("ItemList", new { pageNumber = Model.PageNumber, items = Model.Result })
+            </div>
+        </div>
+
+        <div class="five columns">
+
+            <div class="widget">
+                <h4>Sırala</h4>
+
+                <select asp-for="SearchSortTypeId" asp-items="Model.SearchSortTypes" class="chosen-select js-submit"></select>
+            </div>
+
+            <div class="widget">
+                <h4>Filtrele</h4>
+
+                <h5>Kategorilere göre</h5>
+                <select asp-for="SelectedCategories" asp-items="Model.Categories" data-placeholder="Hizmet kategorileri" class="chosen-select" multiple=""></select>
+
+                <h5>Konuma göre</h5>
+                <select asp-for="ProvinceId" asp-items="Model.Provinces" onchange="FillDistrict(this)" class="chosen-select" data-placeholder="İle göre"></select>
+
+                <select id="districtSelect" asp-for="DistrictId" asp-items="Model.Districts" class="chosen-select" data-placeholder="İlçeye göre"></select>
+
+                <button class="button">Filtrele</button>
+            </div>
+        </div>
+    </form>
+</div>

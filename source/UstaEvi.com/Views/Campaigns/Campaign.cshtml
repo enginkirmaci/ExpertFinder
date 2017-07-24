@@ -1,0 +1,43 @@
+﻿@model CampaignViewModel
+
+<div id="titlebar" class="single">
+    <div class="container">
+        <div class="sixteen columns">
+            <h2>@ViewBag.Title</h2>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    @if (ViewBag.Content != null)
+    {
+        <div class="sixteen columns">
+            <div class="margin-bottom-20">
+                @await Component.InvokeAsync("Content", ViewBag.Content)
+            </div>
+        </div>
+    }
+
+    @foreach (var item in Model.Items)
+    {
+        <div class="plan color-1 one-third column">
+            <div class="plan-price">
+                <h3><i class="fa fa-ticket"></i> @(string.Format("{0} Adet", item.TokenCount))</h3>
+                <span class="value">@item.Price</span>
+                <span class="plan-currency">&#8378;</span>
+            </div>
+            <div class="plan-features">
+                @*@if (!string.IsNullOrWhiteSpace(item.Url))
+                    {
+                    <img src="~/data/campaign/@item.Url" />
+                    }*@
+
+                <ul>
+                    <li>@item.Title</li>
+                    <li><span>@item.Description</span></li>
+                </ul>
+                <a asp-route="payment" asp-route-slugurl="@item.SlugUrl" class="button"><i class="fa fa-shopping-cart"></i> Satın Al ( @(((decimal)(item.Price / item.TokenCount)).ToString("#.##")) &#8378; / adet )</a>
+            </div>
+        </div>
+    }
+</div>

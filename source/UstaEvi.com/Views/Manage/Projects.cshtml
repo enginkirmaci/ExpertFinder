@@ -1,0 +1,87 @@
+﻿@model ProjectsViewModel
+
+<div class="container manage-index">
+    @await Component.InvokeAsync("ManageNav")
+
+    <div class="eleven columns">
+        <h2 class="pull-left">@ViewBag.Title</h2>
+
+        <div class="filters pull-right">
+            <form method="post" role="form" enctype="multipart/form-data">
+                <select asp-for="FilterTypeId" asp-items="Model.FilterTypes" class="chosen-select js-submit"></select>
+            </form>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <div class="margin-top-10"></div>
+        @await Component.InvokeAsync("Content", ViewBag.Content)
+        <div class="margin-bottom-10"></div>
+        @if (Model.Items.Count() > 0)
+        {
+            <table class="manage-table responsive-table">
+                <tr>
+                    <th>Başlık</th>
+                    <th><i class="fa fa-map-marker"></i> Nerede?</th>
+                    <th><i class="fa fa-calendar"></i> Ne zaman?</th>
+                    <th style="width: 17%;"><i class="fa fa-clock-o"></i> Durum</th>
+                    <th style="width: 20%;"></th>
+                </tr>
+
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td class="title">
+                            <h4><a asp-route="viewItem" asp-route-category="@item.Category.SlugUrl" asp-route-slugurl="@item.SlugUrl">@item.Title</a></h4>
+                            @item.Category.Name
+                        </td>
+                        <td>@(item.District != null ? string.Format("{0},", item.District.Name) : string.Empty)  @item.Province.Name</td>
+                        <td>@(item.AddedDate.HasValue ? item.AddedDate.Value.ToShortTrDate() : string.Empty)</td>
+                        <td class="centered">
+                            @switch (item.StatusID)
+                            {
+                                case (int)StatusTypes.Open:
+                                    <i class="fa fa-hourglass-start"></i><span>Açık</span>
+                                    break;
+                                case (int)StatusTypes.Closed:
+                                    <i class="fa fa-check"></i><span>Sonlandı</span>
+                                    break;
+                                case (int)StatusTypes.Declined:
+                                    <i class="fa fa-ban"></i><span>Reddedildi</span>
+                                    break;
+                            }
+                        </td>
+                        <td class="action">
+                            <a asp-route="viewItem" asp-route-category="@item.Category.SlugUrl" asp-route-slugurl="@item.SlugUrl"><i class="fa fa-eye"></i> Göster</a>
+                            @if (item.StatusID == (int)StatusTypes.Open)
+                            {
+                                <a asp-route="editItem" asp-route-categoryslug="@item.Category.SlugUrl" asp-route-itemslug="@item.SlugUrl"><i class="fa fa-pencil"></i> Düzenle</a>
+                            }
+                            @if (item.Offer.Count > 0)
+                            {
+                                @if (item.StatusID == (int)StatusTypes.Open)
+                                {
+                                    <a asp-route="viewItem" asp-route-category="@item.Category.SlugUrl" asp-route-slugurl="@item.SlugUrl" asp-fragment="teklif"><i class="fa fa-gavel"></i> Teklifler (@item.Offer.Count)</a>
+                                }
+                                else if (item.StatusID != (int)StatusTypes.Declined)
+                                {
+                                    <a asp-route="viewItem" asp-route-category="@item.Category.SlugUrl" asp-route-slugurl="@item.SlugUrl" asp-fragment="teklif"><i class="fa fa-gavel"></i> Kazanan Teklif</a>
+                                }
+                            }
+                            @if (item.StatusID == (int)StatusTypes.Closed && item.Offer.Any(i => i.IsWinner == true && !i.IsRated))
+                            {
+                                <a asp-route="viewItem" asp-route-category="@item.Category.SlugUrl" asp-route-slugurl="@item.SlugUrl" asp-fragment="teklif"><i class="fa fa-comments"></i> Yorumla</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+        else
+        {
+            <div class="notification warning closeable">
+                <p>Henüz hiçbir hizmet isteğinde bulunmadınız!  <a asp-route="createItem" class="button">Teklif Al !</a></p><div class="clearfix"></div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,3 @@
+﻿@model ItemListViewModel
+
+@await Component.InvokeAsync("ItemList", new { pageNumber = Model.PageNumber, items = Model.Result })

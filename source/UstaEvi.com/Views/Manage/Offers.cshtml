@@ -1,0 +1,148 @@
+﻿@model OffersViewModel
+
+<div class="container manage-index">
+    @await Component.InvokeAsync("ManageNav")
+
+    <div class="eleven columns">
+        <h2 class="pull-left">@ViewBag.Title</h2>
+
+        <div class="filters pull-right">
+            <form method="post" role="form" enctype="multipart/form-data">
+                <select asp-for="FilterTypeId" asp-items="Model.FilterTypes" class="chosen-select js-submit"></select>
+            </form>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <div class="margin-top-10"></div>
+        @await Component.InvokeAsync("Content", ViewBag.Content)
+        <div class="margin-bottom-10"></div>
+
+        @if (Model.Offers.Count() > 0)
+        {
+            <form asp-route="offerList" method="post" role="form">
+                <div asp-validation-summary="All" class="notification error"></div>
+
+                @foreach (var offer in Model.Offers)
+                {
+                    <div class="application">
+
+                        <div class="app-content">
+                            <div class="info">
+                                <span><a asp-route="viewItem" asp-route-category="@offer.Item.Category.SlugUrl" asp-route-slugurl="@offer.Item.SlugUrl">@offer.Item.Title</a></span>
+                                <ul>
+                                    <li>@(offer.Item.Category.Parent != null ? string.Format("{0} \\ {1}", offer.Item.Category.Parent.Name, offer.Item.Category.Name) : offer.Item.Category.Name)</li>
+                                </ul>
+                            </div>
+
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="app-tabs">
+                            @if (offer.IsWinner.HasValue && offer.IsWinner.Value)
+                            {
+                                <div class="app-tab-content app-content">
+                                    <h4>Hizmet Veren Bilgileri</h4>
+
+                                    <div class="info margin-bottom-15">
+                                        <a asp-route="profile" asp-route-slugUrl="@offer.Item.User.SlugUrl">
+                                            @if (!string.IsNullOrWhiteSpace(offer.Item.User.AvatarUrl))
+                                            {
+                                                <img src="~/data/profile/@offer.Item.User.AvatarUrl" />
+                                            }
+                                            else
+                                            {
+                                                <img src="~/images/avatar-placeholder.png" />
+                                            }
+                                        </a>
+                                    </div>
+                                    <h3><a asp-route="profile" asp-route-slugUrl="@offer.Item.User.SlugUrl">@offer.Item.User.FullName</a></h3>
+                                    <span>@offer.Item.User.Title</span>
+                                    <div class="clearfix"></div>
+
+                                    <i>Cep Telefonu:</i>
+                                    <span><a href="tel:@offer.Item.User.PhoneNumber" target="_blank">@offer.Item.User.PhoneNumber</a></span>
+
+                                    @if (!string.IsNullOrWhiteSpace(offer.Item.User.PhoneNumber2))
+                                    {
+                                        <i>Telefon 2:</i>
+                                        <span><a href="tel:@offer.Item.User.PhoneNumber2" target="_blank">@offer.Item.User.PhoneNumber2</a></span>
+
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(offer.Item.User.Website))
+                                    {
+                                        <i>Websitesi:</i>
+                                        <span><a href="http://@offer.Item.User.Website" target="_blank">@offer.Item.User.Website</a></span>
+
+                                    }
+                                    <i>Email:</i>
+                                    <span><a href="mailto:@offer.Item.User.Email">@offer.Item.User.Email</a></span>
+                                </div>
+                                @if (!offer.Item.IsRated)
+                                {
+                                    <div class="app-tab-content">
+                                        <h4>Hizmet vereni yorumlayın</h4>
+                                        <div class="select-grid">
+                                            <input name="rateValue" class="js-rate-value" type="hidden">
+                                        </div>
+                                        <i style="display:inline-block">Puanınız:</i>
+                                        <div class="starrr">
+                                        </div>
+
+                                        <i class="margin-top-10">Yorumunuz:</i>
+                                        <textarea name="rateComment" placeholder="Yorumunuzu giriniz"></textarea>
+                                        <div class="buttons">
+                                            <button name="rateButton" type="submit" value="@offer.ItemId" class="button margin-top-15">Gönder</button>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <p class="notification success">Hizmet veren yorumlandı.</p>
+                                }
+                            }
+                        </div>
+
+                        <div class="app-tabs">
+                            <div class="app-tab-content">
+                                <h4>Teklifinizin Detayları</h4>
+                                <i>Mesaj:</i>
+                                <span>@offer.Comment</span>
+                                <i>Fiyat:</i>
+                                <span>@offer.OfferPrice &#8378;</span>
+                            </div>
+                        </div>
+
+                        <div class="app-footer">
+
+                            <ul>
+                                <li>
+                                    @if (offer.Item.StatusID == (int)ExpertFinder.Common.Enums.StatusTypes.Open)
+                                    {
+                                        <i class="fa fa-hourglass-start"></i><span>Açık</span>
+                                    }
+                                    else if ((!offer.IsWinner.HasValue || offer.IsWinner == false) && offer.Item.StatusID != (int)ExpertFinder.Common.Enums.StatusTypes.Open)
+                                    {
+                                        <i class="fa fa-times"></i><span>Kapandı</span>
+                                    }
+                                    else if (offer.IsWinner.HasValue && offer.IsWinner.Value)
+                                    {
+                                        <i class="fa fa-trophy"></i><span>Kazanıldı</span>
+                                    }
+                                </li>
+                                <li><i class="fa fa-calendar"></i> @Converter.TrDateTime.ToTurkishRelativeTime(offer.OfferDate)</li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                }
+            </form>
+        }
+        else
+        {
+            <div class="notification warning closeable">
+                <p>Henüz hiçbir teklifiniz yok!</p><div class="clearfix"></div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,94 @@
+﻿@using System.Security.Claims
+
+@inject UserManager<User> UserManager
+@inject IUserEngine UserEngine
+@{
+    var user = await UserEngine.CurrentUser(UserManager.GetUserId(User));
+    var logins = await UserManager.GetLoginsAsync(user);
+    var TokenCount = UserEngine.CurrentUserToken(UserManager.GetUserId(User));
+}
+
+<div class="five columns blog">
+    <div id="titlebar" class="resume">
+        <div class="resume-titlebar">
+            <div class="avatarImage center-image">
+                <a asp-route="profile" asp-route-slugUrl="@user.SlugUrl">
+                    @if (!string.IsNullOrWhiteSpace(user.AvatarUrl))
+                    {
+                        <img src="~/data/profile/@user.AvatarUrl" />
+                    }
+                    else
+                    {
+                        <img src="~/images/avatar-placeholder.png" />
+                    }
+                </a>
+            </div>
+            <div class="resumes-list-content">
+                <h4><a asp-route="profile" asp-route-slugUrl="@user.SlugUrl">@user.FullName</a> <span>@user.Title</span></h4>
+                <h6>Profil Güvenirliği</h6>
+                @if (user.Rating.HasValue)
+                {
+                    <span class="rate-number">@user.Rating</span>
+                }
+                else
+                {
+                    <span class="rate-number">0.0</span>
+                }
+                <div class="rating @ExpertFinder.Common.Converters.Rating.ToString(user.Rating)-stars">
+                    <div class="star-rating"></div>
+                    <div class="star-bg"></div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="verified-providers">
+                    @if (user.EmailConfirmed)
+                    {
+                        <span><i class="fa fa-envelope"></i></span>
+                    }
+                    @if (user.PhoneNumberConfirmed)
+                    {
+                        <span><i class="fa fa-mobile-phone"></i></span>
+                    }
+                    @foreach (var login in logins)
+                    {
+                        <span><i class="fa fa-@login.LoginProvider.ToLower()"></i></span>
+                    }
+                    @if (user.IsBoughtAnyToken.HasValue && user.IsBoughtAnyToken.Value)
+                    {
+                        <span><i class="fa fa-ticket"></i></span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="widget">
+        <ul class="widget-tabs">
+            <li>
+                <h5><a asp-route="account"><i class="fa fa-tachometer"></i>Hesabım</a></h5>
+            </li>
+
+            <li>
+                <h5><a asp-route="profile" asp-route-slugUrl="@user.SlugUrl"><i class="fa fa-user"></i>Profilim</a></h5>
+            </li>
+
+            <li>
+                <h5><a asp-route="offers"><i class="fa fa-gavel"></i>Tekliflerim</a></h5>
+            </li>
+
+            <li>
+                <h5><a asp-route="projects"><i class="fa fa-briefcase"></i>Hizmet İsteklerim</a></h5>
+            </li>
+
+            <li>
+                <h5><a asp-route="tokens"><i class="fa fa-ticket"></i>Jetonlarım (@TokenCount)</a></h5>
+            </li>
+
+            <li>
+                <h5><a asp-route="settings"><i class="fa fa-cog"></i>Ayarlarım</a></h5>
+            </li>
+        </ul>
+    </div>
+
+    <div class="clearfix"></div>
+    <div class="margin-bottom-40"></div>
+</div>

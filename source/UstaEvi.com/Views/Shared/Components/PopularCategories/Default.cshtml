@@ -1,0 +1,26 @@
+﻿@model PopularCategoriesViewModel
+
+<div class="container">
+    <div class="row">
+        <header><h2>Popüler Kategoriler</h2></header>
+        <div class="row">
+            @foreach (var item in Model.PopularCategories)
+            {
+                <div class="col-md-3 col-sm-3">
+                    <div class="item">
+                        <div class="image">
+                            <a asp-route="category" asp-route-category="@item.SlugUrl">
+                                <img src="~/data/categoryheader/@item.ImageUrl" alt="">
+                            </a>
+                        </div>
+                        <div class="wrapper">
+                            <a asp-route="category" asp-route-category="@item.SlugUrl"><h3>@item.Name</h3></a>
+                            <figure><strong>150</strong> ilan</figure>
+                            <a asp-route="createItem" asp-route-categoryslug="@item.SlugUrl" class="btn framed">Teklif Al</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

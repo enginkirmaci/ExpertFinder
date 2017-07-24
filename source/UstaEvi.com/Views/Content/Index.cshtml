@@ -1,0 +1,45 @@
+﻿<div id="titlebar" class="single">
+    <div class="container">
+        <div class="sixteen columns">
+            <h2>@ViewBag.Title</h2>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="four columns">
+        <div class="navigation">
+            <div class="widget-box">
+                <h4>Şirket</h4>
+                <ul class="footer-links">
+                    <li><a href="/hakkimizda/">Hakkımızda</a></li>
+                    <li><a href="/kariyer/">Kariyer</a></li>
+                    <li><a href="/iletisim/">İletişim</a></li>
+                </ul>
+
+                <h4>Bilgi</h4>
+                <ul class="footer-links">
+                    <li><a asp-route="wherewe">Nerelerdeyiz?</a></li>
+                    <li><a href="/nasilcalisir/">Nasıl Çalışır?</a></li>
+                    <li><a href="/yardim/">Yardım</a></li>
+                </ul>
+
+                <h4>Hizmet</h4>
+                <ul class="footer-links">
+                    <li><a asp-route="categories">Kategoriler</a></li>
+                    <li><a asp-route="campaign">Kampanyalar</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
+        <div class="margin-bottom-40"></div>
+    </div>
+
+    <div class="eleven columns margin-bottom-40 right">
+        @if (ViewBag.Content != null)
+        {
+            @await Component.InvokeAsync("Content", ViewBag.Content)
+        }
+    </div>
+</div>

@@ -1,0 +1,174 @@
+﻿@section Scripts {
+    <script>var page_pos = 1;</script>
+    <script>
+        $(function () {
+            $.ajax({
+                url: '/api/JSON/GetProvinceDistrict',
+                type: "GET",
+                dataType: "JSON",
+                success: function (data) {
+                    var options = {
+                        data: data,
+                        adjustWidth: false,
+                        list: {
+                            match: {
+                                enabled: true
+                            }
+                        }
+                    };
+
+                    $("#zone").easyAutocomplete(options);
+                }
+            });
+
+            $("#searchBox").on('submit', function (e) {
+                e.preventDefault();
+
+                var keyword = $("#keyword").val();
+                var zone = $("#zone").val();
+
+                if (!keyword && zone) {
+                    window.location.href = "arama/?zone=" + $("#zone").val();
+                }
+                else if (!keyword && !zone) {
+                    window.location.href = "arama";
+                }
+                else {
+                    window.location.href = "arama/" + keyword + "/" + zone;
+                }
+            });
+        });
+    </script>
+}
+
+<style>
+    .hero-image .inner h1 {
+        margin-bottom: 10px;
+    }
+
+    .hero-image .inner h2 {
+        display: inline-block;
+        font-size: 20px;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 40px;
+        margin-top: 0px;
+        padding: 10px;
+    }
+
+    .padding-reset {
+        padding: 0 !important;
+    }
+
+    .align-left {
+        text-align: left;
+    }
+
+    .font-20 {
+        font-size: 20px !important;
+    }
+</style>
+<!--Hero Image-->
+<section class="hero-image search-filter-middle height-500">
+    <div class="inner">
+        <div class="container">
+            <h1>TEKLİF AL, KARŞILAŞTIR</h1>
+            <h2>Ücretsiz teklif alıp, karşılaştır. Binlerce usta sana teklif vermek için bekliyor.</h2>
+            <div class="search-bar horizontal">
+
+                <form id="itemCreateBox" class="main-search border-less-inputs background-dark narrow" method="post" role="form" enctype="multipart/form-data">
+                    <div class="col-md-9 col-sm-9 padding-reset">
+                        <input name="keyword" type="text" class="form-control font-20" placeholder="Ne yapılmasını istiyorsunuz? örnek: evden eve nakliye istiyorum" value="">
+                    </div>
+                    <div class="col-md-3 col-sm-3 padding-reset align-left">
+                        <button type="submit" class="btn btn-default font-20">Ücretsiz Teklif Al</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="background">
+        <img src="assets\img\restaurant-bg.jpg" alt="">
+    </div>
+</section>
+<!--end Hero Image-->
+<!--Sub Header-->
+@*<section class="sub-header">
+    <div class="search-bar horizontal" id="redefine-search-form">
+                     <div class="content">
+                         <div class="container">
+                             <form class="main-search" role="form" method="post" action="?">
+                                 <div class="input-row">
+                                     <div class="form-group">
+                                         <input type="text" class="form-control" id="keyword" placeholder="Enter Keyword">
+                                     </div>
+                                     <div class="form-group">
+                                         <input type="text" class="form-control" id="location" placeholder="Enter Location">
+                                     </div>
+
+                                     <div class="form-group">
+                                         <select name="category" multiple title="Select Category" data-live-search="true">
+                                             <option value="1">Stores</option>
+                                             <option value="2" class="sub-category">Apparel</option>
+                                             <option value="3" class="sub-category">Computers</option>
+                                             <option value="4" class="sub-category">Nature</option>
+                                             <option value="5">Tourism</option>
+                                             <option value="6">Restaurant & Bars</option>
+                                             <option value="7" class="sub-category">Bars</option>
+                                             <option value="8" class="sub-category">Vegetarian</option>
+                                             <option value="9" class="sub-category">Steak & Grill</option>
+                                             <option value="10">Sports</option>
+                                             <option value="11" class="sub-category">Cycling</option>
+                                             <option value="12" class="sub-category">Water Sports</option>
+                                             <option value="13" class="sub-category">Winter Sports</option>
+                                         </select>
+                                     </div>
+
+                                     <div class="form-group">
+                                         <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                     </div>
+                                 </div>
+                             </form>
+                         </div>
+                     </div>
+                 </div>
+
+             <div class="breadcrumb-wrapper">
+                 <div class="container">
+
+                     <ol class="breadcrumb">
+                         <li><a href="index-directory.htm"><i class="fa fa-home"></i></a></li>
+                         <li><a href="#">Page</a></li>
+                         <li class="active">Detail</li>
+                     </ol>
+                 </div>
+             </div>
+     </section>*@
+
+<section id="why-us" class="block background-color-white">
+    @await Component.InvokeAsync("Content", new { key = "anasayfa" })
+</section>
+
+<section id="recent" class="block">
+    @await Component.InvokeAsync("LatestItems")
+</section>
+
+<section class="block equal-height">
+    @await Component.InvokeAsync("PopularCategories")
+</section>
+
+<section class="block background-color-white">
+    @await Component.InvokeAsync("Categories")
+</section>
+
+<!--Promotion-->
+<section class="block banner center">
+    <div class="container">
+        <h2 class="big">Hemen şimdi teklif al!</h2>
+        <a asp-route="createItem" asp-route-categoryslug="" class="btn btn-default font-20">Ücretsiz Teklif Al</a>
+    </div>
+    @*<div class="background">
+            <img src="assets\img\real-estate-bg.png" alt="">
+        </div>*@
+</section>
+<!--end Promotion-->

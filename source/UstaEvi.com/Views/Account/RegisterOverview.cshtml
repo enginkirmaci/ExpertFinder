@@ -1,0 +1,21 @@
+﻿<div class="container register-div margin-bottom-70 margin-top-50">
+    <div class="eight columns margin-bottom-25">
+        <div class="info-banner">
+            <div class="info-content">
+                @await Component.InvokeAsync("Content", new { key = "kullaniciKayit" })
+                <a asp-route="register" asp-route-type="kullanici" class="button">Hizmet Al</a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+
+    <div class="eight columns">
+        <div class="info-banner">
+            <div class="info-content">
+                @await Component.InvokeAsync("Content", new { key = "sirketKayit" })
+                <a asp-route="register" asp-route-type="sirket" class="button">Firmamı Kaydet</a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>

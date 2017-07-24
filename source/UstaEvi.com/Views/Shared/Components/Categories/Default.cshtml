@@ -1,0 +1,38 @@
+﻿@model CategoriesComponentViewModel
+
+<div class="container">
+    <div class="row">
+        <section id="categories">
+            <header><h2>Kategoriler</h2></header>
+            <ul class="categories">
+                @foreach (var item in Model.Categories)
+                {
+                    @if (item.Parent != null)
+                    {
+                        continue;
+                    }
+
+                    <li style="margin-bottom: 10px;">
+                        <a asp-route="category" asp-route-category="@item.SlugUrl">@item.Name</a>
+
+                        @*@if (item.ChildCategories.Count > 0)
+                            {
+                                var pos = 0;
+
+                                <ul class="sub-category">
+                                    @foreach (var child in item.ChildCategories.OrderBy(i => i.Priority))
+                                    {
+                                        if (pos++ == 3)
+                                        {
+                                            break;
+                                        }
+                                        <li><a asp-route="subcategory" asp-route-category="@item.SlugUrl" asp-route-subcategory="@child.SlugUrl">@child.Name</a></li>
+                                    }
+                                </ul>
+                            }*@
+                    </li>
+                }
+            </ul>
+        </section>
+    </div>
+</div>

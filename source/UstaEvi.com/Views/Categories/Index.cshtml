@@ -1,0 +1,78 @@
+﻿@model CategoriesViewModel
+
+<div id="titlebar" class="photo-bg" style="background-image: url(/data/categoryheader/@(!string.IsNullOrWhiteSpace(Model.ImageUrl) ? Model.ImageUrl : "all.jpg"));">
+    <div class="container">
+        <div class="ten columns">
+            @if (Model.CurrentCategory != null)
+            {
+                @if (Model.CurrentCategory.Parent != null)
+                {
+                    <h3>
+                        <a asp-route="category" asp-route-category="@Model.CurrentCategory.Parent.SlugUrl">@Model.CurrentCategory.Parent.Name</a>
+                    </h3>
+                }
+                <h2>
+                    @Model.CurrentCategory.Name
+                </h2>
+
+            }
+            else
+            {
+                <h2>Kategoriler</h2>
+            }
+        </div>
+
+        <div class="six columns">
+
+            @if (Model.CurrentCategory != null)
+            {
+                <a asp-route="createItem" asp-route-categoryslug="@Model.CurrentCategory.SlugUrl" class="button">Teklif Al !</a>
+            }
+            else
+            {
+                <a asp-route="createItem" class="button">Teklif Al !</a>
+            }
+        </div>
+    </div>
+</div>
+
+<div id="categories">
+    @foreach (var item in Model.Categories)
+    {
+        @if (item.Parent != null)
+        {
+            continue;
+        }
+
+        <div class="container">
+            <div class="sixteen columns">
+                <h3 class="margin-top-25"><a asp-route="category" asp-route-category="@item.SlugUrl">@item.Name</a></h3>
+            </div>
+
+            @if (item.ChildCategories.Count > 0)
+            {
+                <ul id="popular-categories">
+                    @foreach (var child in item.ChildCategories.OrderBy(i => i.Name))
+                    {
+                        <li><a asp-route="subcategory" asp-route-category="@item.SlugUrl" asp-route-subcategory="@child.SlugUrl"><i class="fa @(!string.IsNullOrWhiteSpace(child.Icon) ? child.Icon : item.Icon)"></i>@child.Name</a></li>
+                    }
+                </ul>
+            }
+        </div>
+    }
+</div>
+
+<div class="clearfix"></div>
+<div class="margin-top-40"></div>
+
+@if (Model.Items != null)
+{
+    <form method="post" role="form" enctype="multipart/form-data">
+        <div class="container">
+            <div class="sixteen columns">
+                <h4>Hizmet İstekleri</h4>
+                @await Component.InvokeAsync("ItemList", new { pageNumber = Model.PageNumber, items = Model.Items })
+            </div>
+        </div>
+    </form>
+}

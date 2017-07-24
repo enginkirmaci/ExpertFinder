@@ -1,0 +1,83 @@
+﻿@model WhereWeViewModel
+
+<div id="titlebar">
+    <div class="container">
+        <div class="ten columns">
+            @if (Model.CurrentDistrict != null)
+            {
+                <h3>
+                    <a asp-route="whereweprovince" asp-route-province="@UrlConverter.ToUrlSlug(Model.CurrentDistrict.Province.Name)">@Model.CurrentDistrict.Province.Name</a>
+                </h3>
+                <h2>
+                    @Model.CurrentDistrict.Name
+                </h2>
+            }
+            else if (Model.CurrentProvince != null)
+            {
+                <h2>
+                    @Model.CurrentProvince.Name
+                </h2>
+            }
+            else
+            {
+                <h2>Nerelerdeyiz?</h2>
+            }
+        </div>
+
+        <div class="six columns">
+            <a asp-route="createItem" class="button">Teklif Al !</a>
+        </div>
+    </div>
+</div>
+
+@if (Model.Items == null)
+{
+    @if (Model.Provinces != null)
+    {
+        <div id="categories">
+            <div class="categories-group">
+                <div class="container">
+
+                    <div class="sixteen columns">
+                        <ul>
+                            @foreach (var item in Model.Provinces)
+                            {
+                                <li><a asp-route="whereweprovince" asp-route-province="@UrlConverter.ToUrlSlug(item.Name)">@item.Name</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div id="categories">
+            <div class="categories-group">
+                <div class="container">
+
+                    <div class="sixteen columns">
+                        <ul>
+                            @foreach (var item in Model.CurrentProvince.District.OrderBy(i => i.Name))
+                            {
+                                <li><a asp-route="wherewedistrict" asp-route-province="@UrlConverter.ToUrlSlug(Model.CurrentProvince.Name)" asp-route-district="@UrlConverter.ToUrlSlug(item.Name)">@item.Name</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@if (Model.Items != null)
+{
+    <form method="post" role="form" enctype="multipart/form-data">
+        <div class="container">
+            <div class="sixteen columns">
+                <h4>Hizmet İstekleri</h4>
+                @await Component.InvokeAsync("ItemList", new { pageNumber = Model.PageNumber, items = Model.Items })
+            </div>
+        </div>
+    </form>
+}

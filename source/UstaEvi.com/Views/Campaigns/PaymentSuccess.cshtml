@@ -1,0 +1,42 @@
+﻿@model PaymentSuccessViewModel
+<div class="container">
+    @if (ViewBag.Content != null)
+    {
+        <div class="three columns">&nbsp;</div>
+        <div class="ten columns">
+            <div class="info-banner margin-top-70">
+                <div class="info-content">
+                    <h3>@ViewBag.Title</h3>
+                    @await Component.InvokeAsync("Content", ViewBag.Content)
+                </div>
+
+                <div class="clearfix"></div>
+                <div asp-validation-summary="All" class="notification error  margin-top-40"></div>
+            </div>
+
+            <h2 class="margin-bottom-10 margin-top-40">Satın Alma Bilgileri</h2>
+            <div class="widget  margin-bottom-70 ">
+                <div class="job-overview campaign-overview">
+                    <ul>
+                        <li>
+                            <i class="fa fa-ticket fa-2x"></i>
+                            <div>
+                                <h3><strong>@Model.Campaign.Title</strong></h3>
+
+                                <span>@Model.Campaign.Description</span>
+                                <span>@(string.Format("{0} Adet Jeton", Model.Campaign.TokenCount))</span>
+                                <span>@Model.Campaign.Price &#8378;</span>
+
+                                <hr />
+
+                                <strong>Toplam Tutar: @Model.Campaign.Price &#8378;</strong>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="three columns">&nbsp;</div>
+
+    }
+</div>

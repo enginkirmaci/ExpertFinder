@@ -1,0 +1,252 @@
+﻿@using System.Security.Claims
+
+@inject UserManager<User> UserManager
+@inject IUserEngine UserEngine
+@inject IProjectEngine ProjectEngine
+
+@model ProfileViewModel
+
+@{
+    var user = await UserEngine.CurrentUser(UserManager.GetUserId(User));
+
+    //ViewBag.Title = user.FullName + " - Profil Düzenle";
+}
+
+<div id="titlebar" class="single">
+    <div class="container">
+        <div class="sixteen columns">
+            <h2>@ViewBag.Title</h2>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="six columns">
+        @await Component.InvokeAsync("Content", ViewBag.Content)
+    </div>
+
+    <div class="ten columns">
+        <div class="submit-page manage-index">
+
+            <form asp-route="profileEdit" method="post" role="form" enctype="multipart/form-data">
+                <input asp-for="SlugUrl" type="hidden" />
+                <input asp-for="CellPhone" type="hidden" />
+
+                <div class="form">
+                    <label>Üst resim @*<span>(1 kredi)</span>*@</label>
+                    <img src="@(!string.IsNullOrWhiteSpace(Model.ProfileImageUrl) ? "~/data/profileheader/" + Model.ProfileImageUrl : string.Empty)" class="image" />
+                    <label class="upload-btn">
+                        <input name="headerImage" class="fileupload" type="file">
+                        <i class="fa fa-upload"></i> Yükle
+                    </label>
+                    <span class="fake-input">Dosya seçilmedi</span>
+                    <p class="note">Profil sayfalarınıza daha profesyonel bir hava katmanızı sağlar. Resim yüklerken dosya boyutunun 1mb aşmamasına dikkat ediniz. </p>
+                </div>
+
+                <div class="six columns">
+                    <div class="form">
+                        <label asp-for="FullName"></label>
+                        <input asp-for="FullName" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form">
+                        <label asp-for="Title"></label>
+                        <input asp-for="Title" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="form">
+                        <label asp-for="Email"></label>
+                        <input asp-for="Email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="four columns last">
+                    <div class="form">
+                        <label>Profil Resminiz</label>
+                        <img src="@(!string.IsNullOrWhiteSpace(Model.AvatarUrl) ? "~/data/profile/" + Model.AvatarUrl : string.Empty)" class="image" />
+                        <label class="upload-btn avatar-btn">
+                            <input name="avatarImage" class="fileupload" type="file">
+                            <i class="fa fa-upload"></i> Yükle
+                        </label>
+                        <span class="fake-input">Dosya seçilmedi</span>
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+
+                <div class="five columns">
+                    <div class="form">
+                        <label asp-for="CellPhone"></label>
+                        <input asp-for="CellPhone" disabled="disabled" />
+                        <span asp-validation-for="CellPhone" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="five columns last">
+                    <div class="form">
+                        <label asp-for="Phone"></label>
+                        <input asp-for="Phone" />
+                        <span asp-validation-for="Phone" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="five columns">
+                    <div class="form">
+                        <label asp-for="ProvinceId"></label>
+                        <select asp-for="ProvinceId" asp-items="Model.Provinces" onchange="FillDistrict(this)" class="chosen-select" data-placeholder="İl seçiniz..."></select>
+                        <span asp-validation-for="ProvinceId" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="five columns last">
+                    <div class="form">
+                        <label asp-for="DistrictId"></label>
+                        <select id="districtSelect" asp-for="DistrictId" asp-items="Model.Districts" class="chosen-select" data-placeholder="İlçe seçiniz..."></select>
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+
+                <div class="form">
+                    <label asp-for="Address"></label>
+                    <input asp-for="Address" />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+
+                <div class="form">
+                    <label asp-for="SelectedUserCategories"></label>
+                    <select asp-for="SelectedUserCategories" asp-items="Model.UserCategories" data-placeholder="Hizmet seçiniz" class="chosen-select" multiple=""></select>
+                </div>
+
+                <div class="form">
+                    <label asp-for="Description"></label>
+                    <textarea asp-for="Description" class="WYSIWYG" cols="40" rows="3" spellcheck="true"></textarea>
+                </div>
+
+                <div class="gallery-edit">
+                    <label>Proje Fotoğrafları</label>
+                    @foreach (var item in UserEngine.GetGallery(user.Id))
+                    {
+                        <div class="gallery-item">
+                            <input type="hidden" value="@item.Id" />
+                            <a class="button delete-button">SİL</a>
+                            <a class="img-container img-span" href="~/data/profilegallery/@item.Url">
+                                <img src="~/data/profilegallery/@item.Url" />
+                            </a>
+                        </div>
+                    }
+                </div>
+
+                <p class="note">Toplamda 5 adet resim yükleyebilirsiniz.</p>
+
+                <div class="clearfix"></div>
+
+                <div class="form">
+                    <label asp-for="SMSNotAllowed"></label>
+                    <select asp-for="SMSNotAllowed" class="chosen-select">
+                        <option value="">Seçim Yapınız</option>
+                        <option value="false">Hayır</option>
+                        <option value="true">Evet</option>
+                    </select>
+                </div>
+
+                <div class="clearfix"></div>
+
+                <div class="divider margin-top-0"></div>
+
+                <p class="form-row">
+                    <button type="submit" class="button big">Kaydet <i class="fa fa-arrow-circle-right"></i></button>
+                </p>
+                <div asp-validation-summary="All" class="notification error"></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/scripts/jquery.sceditor.xhtml.min.js"></script>
+    <script src="~/scripts/jquery.sceditor.tr.js"></script>
+    <script src="~/scripts/jquery.sceditor.js"></script>
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script>
+        var uploadIndex = 0;
+
+        $(document).ready(function () {
+            addGalleryButton(uploadIndex++);
+        });
+
+        $('.fileupload').on('change', function (e) {
+            $(this).parent().next('.fake-input').html(this.files[0].name);
+            readURL(this);
+        });
+
+        $(document).on('change', '.imageupload', function (e) {
+            var template = '<div class="gallery-item item-{index}"><a class="button delete-button" data-button="button-{pos}">SİL</a><span class="img-span"><img src="" /></span></div>';
+            template = template.replace('{pos}', uploadIndex - 1);
+            template = template.replace(/{index}/g, uploadIndex - 1);
+
+            $('.gallery-edit').append(template);
+
+            readURL(this, '.item-' + (uploadIndex - 1));
+
+            addGalleryButton(uploadIndex++);
+        });
+
+        $(document).on('click', '.delete-button', function (e) {
+            e.preventDefault();
+
+            var element = $(this).parent();
+
+            if ($(this).parent().find('input[type=hidden]').length > 0) {
+                var id = $(this).parent().find('input[type=hidden]').val();
+
+                $.ajax({
+                    url: '/api/JSON/RemoveGallery/' + id,
+                    type: "GET",
+                    dataType: "JSON",
+                    success: function (result) {
+                        if (result.Type == 1)
+                            element.remove();
+                    }
+                });
+            }
+            else {
+                var button = $(this).data('button');
+                $('.gallery-item.' + button).remove();
+                element.remove();
+            }
+
+            if ($('.gallery-item').not('.btn').length < 5)
+                addGalleryButton(uploadIndex++);
+        });
+
+        function addGalleryButton(index) {
+            $('.add-button').parent().hide();
+
+            if ($('.gallery-item').not('.btn').length < 5) {
+                var buttonTemplate = '<div class="gallery-item btn button-{index}"><label class="add-button"><input name="galleryImage" class="imageupload" type="file"><span>+</span></label></div>';
+                buttonTemplate = buttonTemplate.replace('{index}', index);
+
+                $('.gallery-edit').append(buttonTemplate);
+            }
+        }
+
+        function readURL(input, delegate) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    if (delegate == null)
+                        $(input).parent().parent().find('.image').attr('src', e.target.result);
+                    else
+                        $(delegate).find('img').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}

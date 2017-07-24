@@ -1,0 +1,134 @@
+﻿@using System.Security.Claims
+
+@inject UserManager<User> UserManager
+@inject IUserEngine UserEngine
+@inject ICategoryServices CategoryServices
+
+@model ProfileViewModel
+
+@{
+    var user = await UserEngine.GetUser(Model.SlugUrl);
+    var logins = await UserManager.GetLoginsAsync(user);
+
+    ViewBag.Title = user.FullName;
+}
+
+<div id="titlebar" class="manage-index resume @(string.IsNullOrWhiteSpace(user.ProfileImageUrl) != true ? "photo-bg" : "")" style="@(string.IsNullOrWhiteSpace(user.ProfileImageUrl) != true ? "background-image: url(/data/profileheader/" +@user.ProfileImageUrl +");" : "")">
+    <div class="container">
+        <div class="thirteen columns">
+            <div class="resume-titlebar">
+                <div class="left-titlebar">
+                    <div class="avatarImage">
+                        @if (!string.IsNullOrWhiteSpace(user.AvatarUrl))
+                        {
+                            <img src="~/data/profile/@user.AvatarUrl" />
+                        }
+                        else
+                        {
+                            <img src="~/images/avatar-placeholder.png" />
+                        }
+                    </div>
+
+                    <h6>Profil Güvenirliği</h6>
+                    @if (user.Rating.HasValue)
+                    {
+                        <span class="rate-number">@user.Rating</span>
+                    }
+                    else
+                    {
+                        <span class="rate-number">0.0</span>
+                    }
+
+                    <div class="rating @ExpertFinder.Common.Converters.Rating.ToString(user.Rating)-stars">
+                        <div class="star-rating"></div>
+                        <div class="star-bg"></div>
+                    </div>
+                    <div class="verified-providers">
+                        @if (user.EmailConfirmed)
+                        {
+                            <span><i class="fa fa-envelope"></i></span>
+                        }
+                        @if (user.PhoneNumberConfirmed)
+                        {
+                            <span><i class="fa fa-mobile-phone"></i></span>
+                        }
+                        @foreach (var login in logins)
+                        {
+                            <span><i class="fa fa-@login.LoginProvider.ToLower()"></i></span>
+                        }
+                        @if (user.IsBoughtAnyToken.HasValue && user.IsBoughtAnyToken.Value)
+                        {
+                            <span><i class="fa fa-ticket"></i></span>
+                        }
+                    </div>
+                </div>
+
+                <div class="resumes-list-content">
+                    <h4>@user.FullName <span>@user.Title</span></h4>
+
+                    @if (user.Province != null)
+                    {
+                        <span class="icons">
+                            <i class="fa fa-map-marker"></i>
+                            @(user.District != null ? string.Format("{0},", user.District.Name) : string.Empty)  @user.Province.Name
+                        </span>
+                    }
+
+                    @if (user.Id == UserManager.GetUserId(User))
+                    {
+                        <span class="icons"><a href="tel:@user.PhoneNumber" target="_blank"><i class="fa fa-mobile-phone"></i> @user.PhoneNumber</a></span>
+                        @if (!string.IsNullOrWhiteSpace(@user.PhoneNumber2))
+                        {
+                            <span class="icons"><a href="tel:@user.PhoneNumber2" target="_blank"><i class="fa fa-phone"></i> @user.PhoneNumber2</a></span>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(@user.Website))
+                        {
+                            <span class="icons"><a href="http://@user.Website" target="_blank"><i class="fa fa-link"></i> @user.Website</a></span>
+                        }
+                        <span class="icons"><a href="mailto:@user.Email"><i class="fa fa-envelope"></i> @user.Email</a></span>
+                    }
+                    <div class="skills">
+                        @foreach (var item in user.UserCategoryRelation)
+                        {
+                            if (item.CategoryId.HasValue)
+                            {
+                                <span>@CategoryServices.GetCategoryById(item.CategoryId.Value).Name</span>
+                            }
+                        }
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+        <div class="three columns">
+            <div class="two-buttons">
+                @if (user.Id == UserManager.GetUserId(User))
+                {
+                    <a asp-route="profileEdit" class="button"><i class="fa fa-pencil"></i> Düzenle</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Content
+================================================== -->
+<div class="container">
+    <!-- Recent Jobs -->
+    <div class="eight columns">
+        <div class="padding-right">
+            @Html.Raw(user.Description)
+        </div>
+    </div>
+
+    <!-- Widgets -->
+    <div class="eight columns gallery">
+        @foreach (var item in UserEngine.GetGallery(user.Id))
+            {
+
+            <a class="img-container img-a" href="~/data/profilegallery/@item.Url">
+                <img class="item" src="~/data/profilegallery/@item.Url" />
+            </a>
+        }
+    </div>
+</div>
